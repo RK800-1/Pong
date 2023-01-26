@@ -52,7 +52,7 @@ ExportedObj/
 *.meta
 *.vsconfig
 *.pdf
-
+.png~
 
 # Unity3D generated meta files
 *.pidb.meta
