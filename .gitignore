@@ -13,7 +13,6 @@
 /[Pp]lugins/*
 /XR/*
 
-
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
@@ -50,7 +49,6 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
-*.meta
 *.vsconfig
 *.pdf
 .png~
