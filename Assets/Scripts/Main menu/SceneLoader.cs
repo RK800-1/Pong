@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,25 +10,28 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class SceneLoader : MonoBehaviour
 {
-    TapAudio tapAudioScript;
-    StatsVars statsVars;
-    Settings settingsScript;
-    GameObject mmui, statistics, settings, aboutUs, returnToMenu;
-    string[] objNames = { "MMUI", "Statistics", "Settings", "About", "Return" };
+    [SerializeField] private GameObject mainMenuPanel, statisticsPanel, settingsPanel, aboutPanel, returnPanel;
+
+	[SerializeField] private GameObject[] panels;
+
+	private Dictionary<string, IEnumerable<Transform>> panelListDict = new Dictionary<string, IEnumerable<Transform>>();
+
+	private TapAudio tapAudioScript;
+    private StatsVars statsVars;
+    private Settings settingsScript;
 
     private void Start()
     {
         tapAudioScript = GameObject.FindObjectOfType<TapAudio>();
         statsVars = FindObjectOfType<StatsVars>();
         settingsScript = FindObjectOfType<Settings>();
-        mmui = GameObject.Find(objNames[0]);
-        statistics = GameObject.Find(objNames[1]);
-        settings = GameObject.Find(objNames[2]);
-        aboutUs = GameObject.Find(objNames[3]);
-        returnToMenu = GameObject.Find(objNames[4]);
+
+
+		this.initComponents();
+		this.switchPanels(mainMenuPanel);
     }
 
-    public void PlayGame()
+    protected void PlayGame()
     {
         if (!PlayerPrefs.HasKey("MatchesPlayed")) //Check if the game has no saved data
         { 
@@ -36,38 +40,75 @@ public class SceneLoader : MonoBehaviour
         
         SceneManager.LoadScene(1);
         //tapAudioScript.PlayTap();
-        Time.timeScale = 1;
-        statsVars.MatchCount();
+        //Time.timeScale = 1;
+        //statsVars.MatchCount();
     }
 
-    public void Statistics()
-    {
-        MenuLoader(statistics);
-        ReturnToMenuActive();
-        statsVars.GetGoals();
-    }
+	protected void initComponents()
+	{
+		
+		foreach(GameObject _panel in panels)
+		{
+			panelListDict.Add(_panel.name, _panel.GetComponentsInChildren<Transform>().Skip(1));
+		}
+	}
 
-    public void Settings()
-    {
-        MenuLoader(settings);
-        ReturnToMenuActive();
-        settingsScript.GetSettings();
-    }
+	protected void switchPanels (GameObject _panel)
+	{
 
-    public void AboutUs()
-    {
-        MenuLoader(aboutUs);
-        ReturnToMenuActive();
-    }
+		foreach(KeyValuePair<string, IEnumerable<Transform>> _panelItemDict in panelListDict)
+		{
+			if (_panelItemDict.Key == _panel.name)
+			{
+				this.switchPanelItems(_panelItemDict.Value, true);				
+			}
+			
+			else 
+			{
+				foreach (Transform _panelItem in _panelItemDict.Value)
+				{
+					this.switchPanelItems(_panelItemDict.Value, false);
+				}
+			}
+		}
+	}
 
-    void ReturnToMenuActive()
-    {
-        MenuLoader(returnToMenu);
-        mmui.transform.localScale = new Vector3(0, 0, 0);
-    }
+	protected void switchPanelItems(IEnumerable<Transform> _panelItemDictVal, bool _enable)
+	{
+		foreach (Transform _panelItem in _panelItemDictVal)
+		{
+			_panelItem.gameObject.SetActive(_enable);
+		}
+	}
 
-    void MenuLoader(GameObject obj) // Get all child objects
-    {
-        obj.transform.localScale = new Vector3(1, 1, 1);
-    }
+	protected void enableRetButton()
+	{
+		this.switchPanelItems(panelListDict[returnPanel.name], true);
+	}
+
+	protected void switchFromMenu(GameObject _panel)
+	{
+		this.switchPanels(_panel);
+		this.enableRetButton();
+	}
+
+	public void Statistics()
+	{
+		this.switchFromMenu(statisticsPanel);
+	}
+
+	public void Settings()
+	{
+		this.switchFromMenu(settingsPanel);
+	}
+
+	public void About()
+	{
+		this.switchFromMenu(aboutPanel);
+	}
+
+	public void ReturnToMenuActive()
+	{
+		this.switchPanels(mainMenuPanel);
+	}
 }
