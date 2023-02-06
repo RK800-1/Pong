@@ -11,21 +11,16 @@ using Random = UnityEngine.Random;
 /// </summary>
 public class AI : MonoBehaviour
 {
-    [SerializeField] private NavMeshAgent navMeshAgent;
-    [SerializeField] private Transform racketAI;
+    [SerializeField] private GameObject ball;
     [SerializeField] private float speed = 10;
-    [SerializeField] private bool isWait = false;
-    Vector2 racketPos;
-    public float randomFactor;
-    string difficulty;
 
-    Ball ball;
+    private bool isWait = false;
+    public float randomFactor;
+    private string difficulty;
+
 
     private void Awake()
     {
-        racketAI = GameObject.FindGameObjectWithTag("RacketRight").transform;
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        ball = FindObjectOfType<Ball>();
         difficulty = PlayerPrefs.GetString("Difficulty");
     }
 

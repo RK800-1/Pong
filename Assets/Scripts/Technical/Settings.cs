@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,53 +11,55 @@ using UnityEngine.UI;
 /// </summary>
 public class Settings : MonoBehaviour
 {
-    [SerializeField] Text GTWText, difficultyText,
-                          playerNamePlaceholder, playerNameText, reminder;
-    string playerNameString;
+    [SerializeField] private Text GTWText, difficultyText, reminder;
+    [SerializeField] private InputField playerNameInputField;
 
-    public void GetSettings() // print settings to UI (idk why it is bug here)
+    public void GetSettings()
     {
-        playerNameString = PlayerPrefs.GetString("PlayerName");
-        playerNamePlaceholder.text = playerNameString;
-        GTWText.text = PlayerPrefs.GetString("GoalToWin");
-        difficultyText.text = PlayerPrefs.GetString("Difficulty");
+        if(!PlayerPrefs.HasKey(SaveDataNames.SettingsAreChanged()))
+		{
+            this.ResetProgress();
+		}
+
+        playerNameInputField.text = PlayerPrefs.GetString(SaveDataNames.PlayerName());
+        GTWText.text = PlayerPrefs.GetInt(SaveDataNames.GoalToWin()).ToString();
+        difficultyText.text = PlayerPrefs.GetString(SaveDataNames.Difficulty());
         
         reminder.text = "";
     }
 
     public void SaveProgress()
     {
-        playerNameString = playerNameText.text;
-
-        PlayerPrefs.SetString("GoalToWin", GTWText.text);
-        PlayerPrefs.SetString("Difficulty", difficultyText.text);
-        PlayerPrefs.SetString("PlayerName", playerNameString);
+        PlayerPrefs.SetInt(SaveDataNames.GoalToWin(), int.Parse(GTWText.text));
+        PlayerPrefs.SetString(SaveDataNames.Difficulty(), difficultyText.text);
+        PlayerPrefs.SetString(SaveDataNames.PlayerName(), playerNameInputField.text);
         
         reminder.text = "Settings are saved!";
+    }
+
+    public void ResetProgress()
+    {
+        PlayerPrefs.SetInt(SaveDataNames.GoalsScored(), 0);
+        PlayerPrefs.SetInt(SaveDataNames.GoalsMissed(), 0);
+        PlayerPrefs.SetInt(SaveDataNames.MatchesPlayed(), 0);
+        PlayerPrefs.SetInt(SaveDataNames.GoalToWin(), 5);
+        PlayerPrefs.SetInt(SaveDataNames.SettingsAreChanged(), 1);
+        PlayerPrefs.SetString(SaveDataNames.PlayerName(), "Player 1");
+        PlayerPrefs.SetString(SaveDataNames.Difficulty(), "Easy");
+        
+        reminder.text = "Settings are reset to default!";
     }
 
     public bool IsEnd(int playerScore)
     {
         bool isEnd = false;
-        string gtwString = PlayerPrefs.GetString("GoalToWin");
+        int gtwString = PlayerPrefs.GetInt(SaveDataNames.GoalToWin());
 
-        if (playerScore == int.Parse(gtwString))
+        if (playerScore == gtwString)
         {
             isEnd = true;
         }
 
         return isEnd;
-    }
-
-    public void ResetProgress()
-    {
-        PlayerPrefs.SetInt("GoalsScored", 0);
-        PlayerPrefs.SetInt("GoalsMissed", 0);
-        PlayerPrefs.SetInt("MatchesPlayed", 0);
-        PlayerPrefs.SetString("PlayerName", "Player 1");
-        PlayerPrefs.SetString("GoalToWin", "5");
-        PlayerPrefs.SetString("Difficulty", "Easy");
-        
-        reminder.text = "Settings are reset to default!";
     }
 }

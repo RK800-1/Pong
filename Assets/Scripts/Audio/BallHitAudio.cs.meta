@@ -3,7 +3,9 @@ guid: b50f9b9d65b761341ba2c9ac1ae6f285
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - tapSound: {instanceID: 0}
+  - tapClip: {fileID: 8300000, guid: 38f68006c26ae674f9ca9f2cf520c3d7, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

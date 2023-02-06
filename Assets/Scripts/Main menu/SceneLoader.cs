@@ -10,19 +10,17 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class SceneLoader : MonoBehaviour
 {
-    [SerializeField] private GameObject mainMenuPanel, statisticsPanel, settingsPanel, aboutPanel, returnPanel;
+    [SerializeField] private GameObject mainMenuPanel, statisticsPanel, settingsPanel, aboutPanel, returnPanel, gameScene, pausePanel;
 
 	[SerializeField] private GameObject[] panels;
 
 	private Dictionary<string, IEnumerable<Transform>> panelListDict = new Dictionary<string, IEnumerable<Transform>>();
 
-	private TapAudio tapAudioScript;
     private StatsVars statsVars;
     private Settings settingsScript;
 
     private void Start()
     {
-        tapAudioScript = GameObject.FindObjectOfType<TapAudio>();
         statsVars = FindObjectOfType<StatsVars>();
         settingsScript = FindObjectOfType<Settings>();
 
@@ -31,19 +29,9 @@ public class SceneLoader : MonoBehaviour
 		this.switchPanels(mainMenuPanel);
     }
 
-    protected void PlayGame()
-    {
-        if (!PlayerPrefs.HasKey("MatchesPlayed")) //Check if the game has no saved data
-        { 
-            settingsScript.ResetProgress(); 
-        }
-        
-        SceneManager.LoadScene(1);
-        //tapAudioScript.PlayTap();
-        //Time.timeScale = 1;
-        //statsVars.MatchCount();
-    }
-
+	/// <summary>
+	/// This method creates a dictionary to manage panels in future
+	/// </summary>
 	protected void initComponents()
 	{
 		
@@ -53,9 +41,15 @@ public class SceneLoader : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// We parse a dictionary and enable/disable useful/useless panels
+	/// I found no more solution to switch between panels
+	/// </summary>
+	/// <param name="_panel">
+	/// The panel we want to switch to
+	/// </param>
 	protected void switchPanels (GameObject _panel)
 	{
-
 		foreach(KeyValuePair<string, IEnumerable<Transform>> _panelItemDict in panelListDict)
 		{
 			if (_panelItemDict.Key == _panel.name)
@@ -81,15 +75,21 @@ public class SceneLoader : MonoBehaviour
 		}
 	}
 
-	protected void enableRetButton()
-	{
-		this.switchPanelItems(panelListDict[returnPanel.name], true);
-	}
-
 	protected void switchFromMenu(GameObject _panel)
 	{
 		this.switchPanels(_panel);
 		this.enableRetButton();
+	}
+
+	public void Play()
+	{
+		if (!PlayerPrefs.HasKey(SaveDataNames.SettingsAreChanged())) //Check if the game has no saved data
+		{
+			settingsScript.ResetProgress();
+		}
+
+		this.switchPanels(gameScene);
+		StatsVars.MatchCount();
 	}
 
 	public void Statistics()
@@ -110,5 +110,20 @@ public class SceneLoader : MonoBehaviour
 	public void ReturnToMenuActive()
 	{
 		this.switchPanels(mainMenuPanel);
+	}
+	protected void enableRetButton()
+	{
+		this.switchPanelItems(panelListDict[returnPanel.name], true);
+	}
+
+	public void pauseButton()
+	{
+		this.switchPanelItems(panelListDict[pausePanel.name], true);
+		Time.timeScale = 0;
+	}
+
+	public void resume()
+	{
+		this.switchPanelItems(panelListDict[pausePanel.name], false);
 	}
 }

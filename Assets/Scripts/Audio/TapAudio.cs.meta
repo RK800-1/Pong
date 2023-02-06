@@ -3,7 +3,10 @@ guid: 9d5bcdd44a507e5469b487fa28957ecb
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - audioComponent: {fileID: 6775414821441299445, guid: 1f15f567ce596da418433c4875e44f5b, type: 3}
+  - tapSound: {instanceID: 0}
+  - tapClip: {fileID: 8300000, guid: 675d802e6a62382428d99310ac3a8167, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

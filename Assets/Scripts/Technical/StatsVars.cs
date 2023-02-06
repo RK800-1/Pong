@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,44 +12,29 @@ using UnityEngine.UI;
 /// </summary>
 public class StatsVars : MonoBehaviour
 {
-    [SerializeField] private Text PNText, goalsScoredText, 
-                                  goalsMissedText, matchesPlayedText;
-    int goalsScored, goalsMissed, matchesPlayed;
+    [SerializeField] private Text PNText, goalsScoredText, goalsMissedText, matchesPlayedText;
+    
+    private static int matchesPlayed;
 
-    public void MatchCount()
+    public static void MatchCount()
     {
-        matchesPlayed = PlayerPrefs.GetInt("MatchesPlayed");
+        matchesPlayed = PlayerPrefs.GetInt(SaveDataNames.MatchesPlayed());
         matchesPlayed++;
-        PlayerPrefs.SetInt("MatchesPlayed", matchesPlayed);
+        PlayerPrefs.SetInt(SaveDataNames.MatchesPlayed(), matchesPlayed);
     }
 
-    public void GoalVals(string side)
+    public static void SaveGoalStatistics(string _saveDataName, int _score)
     {
-        goalsScored = PlayerPrefs.GetInt("GoalsScored");
-        goalsMissed = PlayerPrefs.GetInt("GoalsMissed");
-        matchesPlayed = PlayerPrefs.GetInt("MatchesPlayed");
-
-        switch (side)
-        {
-            case "Wall_Left":
-                ++goalsMissed;
-                PlayerPrefs.SetInt("GoalsMissed", goalsMissed);
-                PlayerPrefs.Save();
-                break;
-            case "Wall_Right":
-                ++goalsScored;
-                PlayerPrefs.SetInt("GoalsScored", goalsScored);
-                PlayerPrefs.Save();
-                break;
-            default: break;
-        }
+        int _goals = PlayerPrefs.GetInt(_saveDataName) + _score;
+        PlayerPrefs.SetInt(_saveDataName, _goals);
+        PlayerPrefs.Save();
     }
     
     public void GetGoals()
     {
-        PNText.text = PlayerPrefs.GetString("PlayerName");
-        goalsScoredText.text = PlayerPrefs.GetInt("GoalsScored").ToString();
-        goalsMissedText.text = PlayerPrefs.GetInt("GoalsMissed").ToString();
-        matchesPlayedText.text = PlayerPrefs.GetInt("MatchesPlayed").ToString();
+        PNText.text = PlayerPrefs.GetString(SaveDataNames.PlayerName());
+        goalsScoredText.text = PlayerPrefs.GetInt(SaveDataNames.GoalsScored()).ToString();
+        goalsMissedText.text = PlayerPrefs.GetInt(SaveDataNames.GoalsMissed()).ToString();
+        matchesPlayedText.text = PlayerPrefs.GetInt(SaveDataNames.MatchesPlayed()).ToString();
     }
 }

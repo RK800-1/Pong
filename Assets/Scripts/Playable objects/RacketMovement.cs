@@ -11,19 +11,18 @@ using UnityEngine;
 public class RacketMovement : MonoBehaviour
 {
     Rigidbody2D racketControl;
-    Camera camera;
+
     public float speed = 2;
     public string axis = "Vertical";
 
     private void Awake()
     {
-        camera = Camera.main;
+        racketControl = GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
         float v = Input.GetAxis(axis);
-        racketControl = GetComponent<Rigidbody2D>();
         racketControl.velocity = new Vector2(0, v) * speed;
         //Debug.Log(racketControl.velocity);
         //Debug.Log(v);

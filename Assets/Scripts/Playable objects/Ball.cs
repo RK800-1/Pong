@@ -9,124 +9,29 @@ using UnityEngine;
 /// </summary>
 public class Ball : MonoBehaviour
 {
-    [SerializeField] private float speed;
-    [SerializeField] private int playerOneScore, playerTwoScore;
-    private string winner = "";
+    [SerializeField] GameObject gameSceneManager, ballHitSound;
+    
+    BallHitAudio ballHitAudio;
+    GameMechanicsManager gameMechanicsManager;
+    
+    private static float speed = 40f;
 
-    TextUI textUI;
-    Restart restart;
-    BallHitAudio ballHitaudio;
-    StatsVars statsVars;
 
-    public int PlayerOneScore
-    {
-        get
-        {
-            return playerOneScore = 0;
-        }
+    private void Start()
+	{
+        gameMechanicsManager = gameSceneManager.GetComponent<GameMechanicsManager>();
+        ballHitAudio = ballHitSound.GetComponent<BallHitAudio>();
 
-        set
-        {
-            playerOneScore = PlayerOneScore;
-        }
     }
 
-    public int PlayerTwoScore
+	private void OnCollisionEnter2D(Collision2D col)
     {
-        get
-        {
-            return playerTwoScore = 0;
-        }
-
-        set
-        {
-            playerTwoScore = PlayerTwoScore;
-        }
+        ballHitAudio.PlayBallHit();
+        gameMechanicsManager.ballCollisionBehave(col);
     }
 
-    void Start()
+    public static float parmSpeed()
     {
-        GetComponent<Rigidbody2D>().velocity = Vector2.right * speed;
-        textUI = FindObjectOfType<TextUI>();
-        restart = FindObjectOfType<Restart>();
-        ballHitaudio = FindObjectOfType<BallHitAudio>();
-        statsVars = FindObjectOfType<StatsVars>();
-    }
-
-    protected float hitFactor(Vector2 ballPos, Vector2 racketPos, float racketHeight)
-    {
-        return (ballPos.y - racketPos.y) / racketHeight;
-    }
-
-    protected void BallReaction(Collision2D col, int x)
-    {
-        float y = hitFactor(transform.position,
-                                col.transform.position,
-                                col.collider.bounds.size.y);
-        Vector2 dir = new Vector2(x, y).normalized;
-        GetComponent<Rigidbody2D>().velocity = dir * speed;
-    }
-
-    protected void WinAction(Collision2D col, string winner, Vector2 side, bool isEnd)
-    {
-        textUI.PrintTextToUI(winner, playerOneScore, playerTwoScore, isEnd);
-        restart.ParmRestoreField(false);
-        GetComponent<Rigidbody2D>().velocity = side * speed;
-    }
-
-    bool IsGameOver(int playerScore)
-    {
-        bool IsGameOver;
-
-        string gtwString = PlayerPrefs.GetString("GoalToWin");
-
-        if (playerScore == int.Parse(gtwString))
-        {
-            IsGameOver = true;
-        }
-
-        else
-        {
-            IsGameOver = false;
-        }
-
-        return IsGameOver;
-    }
-
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        string objName = col.gameObject.name;
-        bool isGameOver;
-        
-        ballHitaudio.PlayBallHit();
-
-        switch (objName)
-        {
-            case "Racket_Left":
-                this.BallReaction(col, 1);
-                break;
-            case "Racket_Right":
-                this.BallReaction(col, -1);
-                break;
-            case "Wall_Left":
-                winner = "Player 2";
-                ++playerTwoScore;
-                statsVars.GoalVals(objName);
-                Vector2 right = Vector2.right;
-                isGameOver = this.IsGameOver(playerTwoScore);
-                this.WinAction(col, winner, right, isGameOver);
-                break;
-            case "Wall_Right":
-                winner = PlayerPrefs.GetString("PlayerName");
-                ++playerOneScore;
-                statsVars.GoalVals(objName);
-                Vector2 left = Vector2.left;
-                isGameOver = this.IsGameOver(playerOneScore);
-                this.WinAction(col, winner, left, isGameOver);
-                break;
-
-            default: break;
-
-        }
+        return speed;
     }
 }

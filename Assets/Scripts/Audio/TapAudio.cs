@@ -8,24 +8,8 @@ using UnityEngine;
 /// </summary>
 public class TapAudio : MonoBehaviour
 {
-    [SerializeField] protected GameObject audioComponent;
     [SerializeField] protected AudioSource tapSound;
     [SerializeField] protected AudioClip tapClip;
-
-    DontDestroy dontDestroy;
-
-    private void Awake()
-    {
-        if (!FindObjectOfType<TapAudio>())
-        {
-            dontDestroy.DoNotDestroy();
-        }
-    }
-
-    void Start()
-    {
-        tapSound = audioComponent.GetComponent<AudioSource>();
-    }
 
     public void PlayTap()
     {

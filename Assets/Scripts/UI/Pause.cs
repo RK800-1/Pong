@@ -10,27 +10,20 @@ using UnityEngine.UI;
 /// </summary>
 public class Pause : MonoBehaviour
 {
-    TextUI textUI;
     GameObject pauseMenu;
     TapAudio tapAudio;
 
     void Start()
     {
-        textUI = FindObjectOfType<TextUI>();
         pauseMenu = GameObject.FindWithTag("PauseMenu");
         tapAudio = GameObject.FindObjectOfType<TapAudio>();
-
-        if(!textUI.isPause)
-        {
-            pauseMenu.SetActive(false);
-        }
     }
 
     public void ResumeButton()
     {
         tapAudio.PlayTap();
-        textUI.WinMessage.SetActive(true);
-        textUI.parmDelay();
+        //textUI.WinMessage.SetActive(true);
+        //textUI.parmDelay();
         pauseMenu.SetActive(false);
     }
     
