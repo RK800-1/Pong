@@ -40,6 +40,7 @@ public class GameSceneScript : MonoBehaviour
 
     protected IEnumerator resumeDelay()
     {
+        sceneLoader.resume(); //cratch
         winMessage.gameObject.SetActive(true);
 
         for (int i = 3; i >= 1; i--)
@@ -49,7 +50,6 @@ public class GameSceneScript : MonoBehaviour
         }
 
         winMessage.gameObject.SetActive(false);
-        sceneLoader.resume(); //cratch
         pauseButton.SetActive(true);
         Time.timeScale = 1;
     }
@@ -71,7 +71,8 @@ public class GameSceneScript : MonoBehaviour
         playerOneScore.text = "0";
         playerTwoScore.text = "0";
         winMessage.gameObject.SetActive(true);
-        winMessage.text = "Press any key to start";
+        winMessage.text = "Use up/down arrows to move if you play from pc \n" +
+                          "Press any key to start";
 
         StartCoroutine(WaitForUserToStart(false));
     }

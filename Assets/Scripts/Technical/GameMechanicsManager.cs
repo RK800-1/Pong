@@ -14,7 +14,6 @@ public class GameMechanicsManager : MonoBehaviour
 
 	private void Start()
 	{
-		playerOneScore = playerTwoScore = 0;
 		gameSceneScript = this.gameObject.GetComponent<GameSceneScript>();
 		racketLeftPos = racketLeft.transform.position.x;
 	}
@@ -33,12 +32,6 @@ public class GameMechanicsManager : MonoBehaviour
         ball.gameObject.GetComponent<Rigidbody2D>().velocity = dir * Ball.parmSpeed();
     }
 
-	protected void resetRacketPos()
-	{
-		racketLeft.transform.position = new Vector2(racketLeftPos, 0);
-		racketRight.transform.position = new Vector2(-racketLeftPos, 0);
-	}
-
 	protected void WinAction(Collision2D col, string winner, Vector2 side, bool isEnd)
 	{
 		
@@ -47,8 +40,9 @@ public class GameMechanicsManager : MonoBehaviour
 
 	protected bool IsGameOver(int playerScore)
 	{
+		var test = PlayerPrefs.GetInt(SaveDataNames.GoalToWin());
 
-		if (playerScore == PlayerPrefs.GetInt(SaveDataNames.GoalToWin()))
+		if (playerScore >= PlayerPrefs.GetInt(SaveDataNames.GoalToWin()))
 		{
 			playerOneScore = playerTwoScore = 0;
 			return true;
@@ -58,6 +52,19 @@ public class GameMechanicsManager : MonoBehaviour
 		{
 			return false;
 		}
+	}
+	
+	protected void resetGameObjectsPos()
+	{
+		racketLeft.transform.position = new Vector2(racketLeftPos, 0);
+		racketRight.transform.position = new Vector2(-racketLeftPos, 0);
+		ball.transform.localPosition = new Vector3(0f, 0f, 0f);
+	}
+
+	public void resetSceneBeforeStart()
+	{
+		playerOneScore = playerTwoScore = 0;
+		this.resetGameObjectsPos();
 	}
 
     public void ballCollisionBehave(Collision2D _collideObject)
@@ -77,7 +84,7 @@ public class GameMechanicsManager : MonoBehaviour
 			playerTwoScore++;
 			Vector2 right = Vector2.right;
 			gameSceneScript.PrintWinText(winner, playerTwoScore, this.IsGameOver(playerTwoScore));
-			this.resetRacketPos();
+			this.resetGameObjectsPos();
 
 			StatsVars.SaveGoalStatistics(SaveDataNames.GoalsMissed(), playerTwoScore);
 		}
@@ -87,7 +94,7 @@ public class GameMechanicsManager : MonoBehaviour
 			playerOneScore++;
 			Vector2 left = Vector2.left;
 			gameSceneScript.PrintWinText(PlayerPrefs.GetString(SaveDataNames.PlayerName()), playerOneScore, this.IsGameOver(playerOneScore));
-			this.resetRacketPos();
+			this.resetGameObjectsPos();
 
 			StatsVars.SaveGoalStatistics(SaveDataNames.GoalsScored(), playerOneScore);
 		}

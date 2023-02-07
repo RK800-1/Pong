@@ -11,7 +11,8 @@ using UnityEngine.UI;
 /// </summary>
 public class Settings : MonoBehaviour
 {
-    [SerializeField] private Text GTWText, difficultyText, reminder;
+    [SerializeField] private Text reminder;
+    [SerializeField] private Dropdown goalsToWin, difficulty;
     [SerializeField] private InputField playerNameInputField;
 
     public void GetSettings()
@@ -22,17 +23,19 @@ public class Settings : MonoBehaviour
 		}
 
         playerNameInputField.text = PlayerPrefs.GetString(SaveDataNames.PlayerName());
-        GTWText.text = PlayerPrefs.GetInt(SaveDataNames.GoalToWin()).ToString();
-        difficultyText.text = PlayerPrefs.GetString(SaveDataNames.Difficulty());
+        goalsToWin.value = PlayerPrefs.GetInt(SaveDataNames.GoalToWinIndex());
+        difficulty.value = PlayerPrefs.GetInt(SaveDataNames.Difficulty());
         
         reminder.text = "";
     }
 
     public void SaveProgress()
     {
-        PlayerPrefs.SetInt(SaveDataNames.GoalToWin(), int.Parse(GTWText.text));
-        PlayerPrefs.SetString(SaveDataNames.Difficulty(), difficultyText.text);
+        PlayerPrefs.SetInt(SaveDataNames.GoalToWin(), int.Parse(goalsToWin.options[goalsToWin.value].text));
+        PlayerPrefs.SetInt(SaveDataNames.GoalToWinIndex(), goalsToWin.value);
+        PlayerPrefs.SetInt(SaveDataNames.Difficulty(), difficulty.value);
         PlayerPrefs.SetString(SaveDataNames.PlayerName(), playerNameInputField.text);
+        PlayerPrefs.Save();
         
         reminder.text = "Settings are saved!";
     }
@@ -42,10 +45,11 @@ public class Settings : MonoBehaviour
         PlayerPrefs.SetInt(SaveDataNames.GoalsScored(), 0);
         PlayerPrefs.SetInt(SaveDataNames.GoalsMissed(), 0);
         PlayerPrefs.SetInt(SaveDataNames.MatchesPlayed(), 0);
+        PlayerPrefs.SetInt(SaveDataNames.GoalToWinIndex(), 0);
         PlayerPrefs.SetInt(SaveDataNames.GoalToWin(), 5);
         PlayerPrefs.SetInt(SaveDataNames.SettingsAreChanged(), 1);
+        PlayerPrefs.SetInt(SaveDataNames.Difficulty(), 0);
         PlayerPrefs.SetString(SaveDataNames.PlayerName(), "Player 1");
-        PlayerPrefs.SetString(SaveDataNames.Difficulty(), "Easy");
         
         reminder.text = "Settings are reset to default!";
     }

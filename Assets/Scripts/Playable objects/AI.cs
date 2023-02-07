@@ -12,16 +12,13 @@ using Random = UnityEngine.Random;
 public class AI : MonoBehaviour
 {
     [SerializeField] private GameObject ball;
-    [SerializeField] private float speed = 10;
+    [SerializeField] private float speed;
 
-    private bool isWait = false;
     public float randomFactor;
-    private string difficulty;
 
 
     private void Awake()
     {
-        difficulty = PlayerPrefs.GetString("Difficulty");
     }
 
     private void FixedUpdate()
@@ -34,40 +31,37 @@ public class AI : MonoBehaviour
         float x = transform.position.x;
         float getBallPos = ball.transform.position.y;
         float step = speed * Time.deltaTime * randomFactor;
-        Vector2 targetPos = new Vector2(20, getBallPos);
+        Vector2 targetPos = new Vector2(x, getBallPos);
 
         transform.position = Vector2.MoveTowards(transform.position, targetPos, step);
     }
 
     public IEnumerator RandomRange() // AI delay just to make it easier/harder
     {
-        isWait = true;
-
-        switch(difficulty)
+        switch(PlayerPrefs.GetInt(SaveDataNames.Difficulty()))
         {
-            case "Easy":
+            case 0:
                 randomFactor = Random.Range(0.1f, 0.3f);
                 break;
-            case "Medium":
+            case 1:
                 randomFactor = Random.Range(0.4f, 0.6f);
                 break;
-            case "Hard":
-                randomFactor = Random.Range(0.6f, 0.8f);
+            case 2:
+                randomFactor = Random.Range(0.65f, 0.95f);
                 break;
             default:
-                randomFactor = Random.Range(0.45f, 0.95f);
+                randomFactor = Random.Range(0.45f, 0.5f);
                 break;
         }
 
         yield return new WaitForSecondsRealtime(2f);
-        isWait = false;
     }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
         string objName = col.gameObject.name;
 
-        if(objName == "Ball")
+        if(objName == ball.name)
         {
             StartCoroutine(RandomRange());
         }

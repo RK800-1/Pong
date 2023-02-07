@@ -27,7 +27,12 @@ public class SceneLoader : MonoBehaviour
 
 		this.initComponents();
 		this.switchPanels(mainMenuPanel);
-    }
+
+		if (!PlayerPrefs.HasKey(SaveDataNames.SettingsAreChanged())) //Check if the game has no saved data
+		{
+			settingsScript.ResetProgress();
+		}
+	}
 
 	/// <summary>
 	/// This method creates a dictionary to manage panels in future
@@ -83,11 +88,6 @@ public class SceneLoader : MonoBehaviour
 
 	public void Play()
 	{
-		if (!PlayerPrefs.HasKey(SaveDataNames.SettingsAreChanged())) //Check if the game has no saved data
-		{
-			settingsScript.ResetProgress();
-		}
-
 		this.switchPanels(gameScene);
 		StatsVars.MatchCount();
 	}

@@ -20,33 +20,29 @@ public class RacketMovement : MonoBehaviour
         racketControl = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    private void Update()
     {
         float v = Input.GetAxis(axis);
-        racketControl.velocity = new Vector2(0, v) * speed;
-        //Debug.Log(racketControl.velocity);
-        //Debug.Log(v);
 
-        //racketControl = GetComponent<Rigidbody2D>();
-        //Vector3 v;
+        if(v != 0)
+        {
+            this.racketVelocityUpdate(v);
+        }
+        
+  //      else if(Input.touchCount > 0)
+		//{
+  //          Touch touch = Input.GetTouch(0);
+            
+  //          if(touch.phase == TouchPhase.Began)
+		//	{
+  //              this.racketVelocityUpdate(touch.position.y);
+  //          }
+		//}
+        
+    }
 
-        //if (Input.touchCount > 0)
-        //{
-        //    Touch touch = Input.GetTouch(0);
-        //    v = camera.ScreenToWorldPoint(touch.position);
-        //    switch (touch.phase)
-        //    {
-        //        case TouchPhase.Began:
-        //            break;
-
-        //        case TouchPhase.Moved:
-        //            racketControl.position = new Vector2(-20, v.y);
-        //            break;
-
-        //        default:
-        //            break;
-
-        //    }
-        //}
+    protected void racketVelocityUpdate(float _yPos)
+    {
+        racketControl.velocity = new Vector2(0, _yPos) * speed;
     }
 }

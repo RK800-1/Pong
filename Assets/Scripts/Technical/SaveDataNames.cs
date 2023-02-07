@@ -11,6 +11,7 @@ public class SaveDataNames : MonoBehaviour
     private static string goalToWin = "GoalToWin";
     private static string difficulty = "Difficulty";
     private static string settingsAreChanged = "SettingsAreChanged";
+    private static string goalToWinIndex = "GoalToWinIndex";
 
     public static string PlayerName()
 	{
@@ -45,5 +46,10 @@ public class SaveDataNames : MonoBehaviour
     public static string SettingsAreChanged()
     {
         return settingsAreChanged;
+    }
+
+    public static string GoalToWinIndex()
+    {
+        return goalToWinIndex;
     }
 }
